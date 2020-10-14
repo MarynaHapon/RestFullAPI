@@ -2,7 +2,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 // App
-import { Role, Sex, User } from './entity/user.entity';
+import { User } from './entity/user.entity';
+import { Role, Sex } from '../../common/types';
 
 @Injectable()
 export class UsersService {

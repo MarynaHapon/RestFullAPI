@@ -1,20 +1,15 @@
 // App
 import { Keynote } from './keynote.entity';
 import { Video } from './video.entity';
-
-export const enum Availability {
-  standard,
-  select,
-  premium,
-}
+import { Status } from '../../../common/types';
 
 export class Lesson {
   title: string;
   description: string;
   order: number;
-  availability: Availability;
+  availability: Status;
   content: {
-    videos: [Video];
-    keynotes: [Keynote];
+    videos: Video[];
+    keynotes: Keynote[];
   }
 }

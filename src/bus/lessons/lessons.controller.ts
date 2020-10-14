@@ -11,6 +11,10 @@ import {
 
 // App
 import { LessonsService } from './lessons.service';
+import { CreateLessonDto } from './dto/create-lesson.dto';
+import { UpdateLessonDto } from './dto/update-lesson.dto';
+import { AddVideoDto } from './dto/add-video.dto';
+import { AddKeynoteDto } from './dto/add-keynote.dto';
 
 @Controller('lessons')
 export class LessonsController {
@@ -24,52 +28,75 @@ export class LessonsController {
   }
 
   @Post()
-  create(@Body() body) {
-    return this.lessonsService.create(body);
+  create(
+    @Body() createLessonDto: CreateLessonDto,
+  ) {
+    return this.lessonsService.create(createLessonDto);
   }
 
   @Get(':lessonHash')
-  getById(@Param('lessonHash') lessonHash: string) {
+  getById(
+    @Param('lessonHash') lessonHash: string,
+  ) {
     return this.lessonsService.getById(lessonHash);
   }
 
   @Put(':lessonHash')
-  update(@Param('lessonHash') lessonHash: string, @Body() body) {
-    return this.lessonsService.update(lessonHash, body);
+  update(
+    @Param('lessonHash') lessonHash: string,
+    @Body() updateLessonDto: UpdateLessonDto,
+  ) {
+    return this.lessonsService.update(lessonHash, updateLessonDto);
   }
 
   @Delete(':lessonHash')
-  remove(@Param('lessonHash') lessonHash: string) {
+  remove(
+    @Param('lessonHash') lessonHash: string,
+  ) {
     return this.lessonsService.remove(lessonHash);
   }
 
   @Post(':lessonHash/videos')
-  addVideo(@Param('lessonHash') lessonHash: string, @Body() body) {
-    return this.lessonsService.addVideo(lessonHash, body);
+  addVideo(
+    @Param('lessonHash') lessonHash: string,
+    @Body() addVideoDto: AddVideoDto,
+  ) {
+    return this.lessonsService.addVideo(lessonHash, addVideoDto);
   }
 
   @Get(':lessonHash/videos/:videoHash')
-  playVideo(@Param() param) {
+  playVideo(
+    @Param() param,
+  ) {
     return this.lessonsService.playVideo(param);
   }
 
   @Delete(':lessonHash/videos/:videoHash')
-  removeVideo(@Param() param) {
+  removeVideo(
+    @Param() param,
+  ) {
     return this.lessonsService.removeVideo(param);
   }
 
   @Post(':lessonHash/keynotes')
-  addKeynote(@Param('lessonHash') lessonHash: string, @Body() body) {
-    return this.lessonsService.addKeynote(lessonHash, body);
+  addKeynote(
+    @Param('lessonHash') lessonHash: string,
+    @Body() addKeynoteDto: AddKeynoteDto,
+  ) {
+    return this.lessonsService.addKeynote(lessonHash, addKeynoteDto);
   }
 
   @Get(':lessonHash/keynotes/:keynoteHash')
-  getKeynote(@Param() param) {
+  getKeynote(
+    @Param() param,
+  ) {
     return this.lessonsService.getKeynote(param);
   }
 
   @Get(':lessonHash/keynotes/:keynoteHash')
-  removeKeynote(@Param() param) {
+  removeKeynote(
+    @Param() param,
+  ) {
     return this.lessonsService.removeKeynote(param);
   }
 }

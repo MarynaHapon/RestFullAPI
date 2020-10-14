@@ -1,13 +1,5 @@
-export const enum Sex {
-  m,
-  f,
-}
-
-export const enum Role {
-  newbie,
-  student,
-  teacher,
-}
+// App
+import { Role, Sex } from '../../../common/types';
 
 export class User {
   name: string;

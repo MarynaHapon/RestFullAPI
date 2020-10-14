@@ -2,14 +2,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 // App
-import { Lesson, Availability } from './entity/lesson.entity';
+import { Lesson } from './entity/lesson.entity';
+import { Status } from '../../common/types';
 
 @Injectable()
 export class LessonsService {
   private lessons: Lesson[] = [
     {
       title: 'title',
-      availability: Availability.standard,
+      availability: Status.standard,
       description: 'description',
       order: 1,
       content: {

@@ -12,6 +12,8 @@ import {
 
 // App
 import { ClassesService } from './classes.service';
+import { CreateClassDto } from './dto/create-class.dto';
+import { UpdateClassDto } from './dto/update-class.dto';
 
 @Controller('classes')
 export class ClassesController {
@@ -20,38 +22,53 @@ export class ClassesController {
   ) {}
 
   @Get()
-  getAll(@Query() paginationQuery) {
+  getAll(
+    @Query() paginationQuery,
+  ) {
     const { limit, offset } = paginationQuery;
     return this.classesService.getAll();
   }
 
   @Post()
-  create(@Body() body) {
-    return this.classesService.create(body);
+  create(
+    @Body() createClassDto: CreateClassDto,
+  ) {
+    return this.classesService.create(createClassDto);
   }
 
   @Get(':classHash')
-  getById(@Param('classHash') classHash: string) {
+  getById(
+    @Param('classHash') classHash: string,
+  ) {
     return this.classesService.getById(classHash);
   }
 
   @Put(':classHash')
-  update(@Param('classHash') classHash: string, @Body() body) {
-    return this.classesService.update(classHash, body);
+  update(
+    @Param('classHash') classHash: string,
+    @Body() updateClassDto: UpdateClassDto,
+  ) {
+    return this.classesService.update(classHash, updateClassDto);
   }
 
   @Delete(':classHash')
-  remove(@Param('classHash') classHash: string) {
+  remove(
+    @Param('classHash') classHash: string,
+  ) {
     return this.classesService.remove(classHash);
   }
 
   @Post(':classHash/enroll')
-  enrollStudent(@Param('classHash') classHash: string) {
+  enrollStudent(
+    @Param('classHash') classHash: string,
+  ) {
     return this.classesService.enrollStudent(classHash);
   }
 
   @Post(':classHash/expel')
-  expelStudent(@Param('classHash') classHash: string) {
+  expelStudent(
+    @Param('classHash') classHash: string,
+  ) {
     return this.classesService.expelStudent(classHash);
   }
 }

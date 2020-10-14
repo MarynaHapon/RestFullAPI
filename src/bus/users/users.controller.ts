@@ -9,8 +9,10 @@ import {
   Delete,
 } from '@nestjs/common';
 
-// Other
+// App
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -24,22 +26,31 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() body) {
-    return this.usersService.create(body);
+  create(
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    return this.usersService.create(createUserDto);
   }
 
   @Get(':userHash')
-  getById(@Param('userHash') userHash: string) {
+  getById(
+    @Param('userHash') userHash: string,
+  ) {
     return this.usersService.getById(userHash);
   }
 
   @Put(':userHash')
-  update(@Param('userHash') userHash: string, @Body() body) {
-    return this.usersService.update(userHash, body);
+  update(
+    @Param('userHash') userHash: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(userHash, updateUserDto);
   }
 
   @Delete(':userHash')
-  remove(@Param('userHash') userHash: string) {
+  remove(
+    @Param('userHash') userHash: string,
+  ) {
     return this.usersService.remove(userHash);
   }
 }

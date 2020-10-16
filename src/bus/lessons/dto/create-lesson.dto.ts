@@ -1,11 +1,20 @@
 // Core
-import { IsEnum, IsObject, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsObject, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
 
 // App
 import { Status } from '../../../common/types';
 import { AddVideoDto } from './add-video.dto';
 import { AddKeynoteDto } from './add-keynote.dto';
 
+class ContentDto {
+  @IsArray()
+  @ValidateNested()
+  readonly videos: AddVideoDto[];
+
+  @IsArray()
+  @ValidateNested()
+  readonly keynotes: AddKeynoteDto[];
+}
 
 export class CreateLessonDto {
   @IsString()
@@ -22,9 +31,5 @@ export class CreateLessonDto {
 
   @IsObject()
   @IsOptional()
-  @ValidateNested()
-  readonly content?: {
-    videos?: AddVideoDto[];
-    keynotes?: AddKeynoteDto[];
-  }
+  readonly content: ContentDto;
 }

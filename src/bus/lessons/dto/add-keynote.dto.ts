@@ -8,7 +8,7 @@ export class AddKeynoteDto {
   @IsPositive()
   @Min(1)
   @Max(999)
-  readonly readonly: number;
+  readonly order: number;
 
   @IsUrl()
   readonly uri: string;

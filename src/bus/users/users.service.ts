@@ -1,46 +1,56 @@
 // Core
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 // App
 import { User } from './entity/user.entity';
-import { Role, Sex } from '../../common/types';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  public users: User[] = [
-    {
-      name: 'Maryna',
-      email: 'test@gmail.com',
-      phone: '90453445234',
-      password: '123456',
-      sex: Sex.f,
-      role: Role.student,
-    }
-  ];
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
 
   getAll() {
-    return this.users;
+    return this.userModel
+      .find()
+      .exec();
   }
 
-  create(createUserDto: any) {
-    return this.users;
+  create(createUserDto: CreateUserDto) {
+    const user = new this.userModel(createUserDto);
+    return user.save();
   }
 
-  getById(userHash: string) {
-    let user;
+  async getById(userHash: string) {
+    const user = await this.userModel
+      .findOne({ _id: userHash })
+      .exec();
 
     if (!user) {
       throw new NotFoundException(`User "${userHash}" not found`);
     }
 
-    return this.users;
+    return user;
   }
 
-  update(userHash: string, updateUserDto) {
-    return this.users;
+  async update(userHash: string, updateUserDto: UpdateUserDto) {
+    const existingUser = await this.userModel
+      .findOneAndUpdate({ _id: userHash }, { $set: updateUserDto }, { new: true })
+      .exec()
+
+    if (!existingUser) {
+      throw new NotFoundException(`User "${userHash}" not found`);
+    }
+
+    return existingUser;
   }
 
-  remove(userHash: string) {
-    return this.users;
+  async remove(userHash: string) {
+    const existingUser = await this.getById(userHash);
+    return existingUser.remove();
   }
 }

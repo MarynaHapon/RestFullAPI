@@ -8,7 +8,7 @@ export class AddVideoDto {
   @IsPositive()
   @Min(1)
   @Max(999)
-  readonly readonly: number;
+  readonly order: number;
 
   @IsUrl()
   readonly uri: string;

@@ -3,7 +3,6 @@ import {
   IsString,
   IsPositive,
   IsObject,
-  ValidateNested,
   Min,
   Max,
 } from 'class-validator';
@@ -29,6 +28,5 @@ export class CreateClassDto {
   readonly order: number;
 
   @IsObject()
-  @ValidateNested()
   readonly duration: DurationDto;
 }

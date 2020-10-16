@@ -1,73 +1,73 @@
 // Core
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 // App
 import { Lesson } from './entity/lesson.entity';
-import { Status } from '../../common/types';
+import { CreateLessonDto } from './dto/create-lesson.dto';
+import { UpdateLessonDto } from './dto/update-lesson.dto';
 
 @Injectable()
 export class LessonsService {
-  private lessons: Lesson[] = [
-    {
-      title: 'title',
-      availability: Status.standard,
-      description: 'description',
-      order: 1,
-      content: {
-        videos: [{
-          title: 'videos title',
-          order: 1,
-          uri: 'https://videos/title'
-        }],
-        keynotes: [{
-          title: 'keynotes title',
-          order: 1,
-          uri: 'https://keynotes/title'
-        }]
-      }
-    }
-  ];
+  constructor(
+    @InjectModel(Lesson.name) private readonly lessonModel: Model<Lesson>,
+  ) {}
 
   getAll() {
-    return this.lessons;
+    return this.lessonModel
+      .find()
+      .exec();
   }
 
-  create(createLessonDto: any) {
-    return this.lessons;
+  create(createLessonDto: CreateLessonDto) {
+    const lesson = new this.lessonModel(createLessonDto);
+    return lesson.save();
   }
 
-  getById(lessonHash: string) {
-    let lesson;
+  async getById(lessonHash: string) {
+    const lesson = await this.lessonModel
+      .findOne({ _id: lessonHash })
+      .exec();
 
     if (!lesson) {
       throw new NotFoundException(`Lesson "${lessonHash}" not found`);
     }
 
-    return this.lessons;
+    return lesson;
   }
 
-  update(lessonHash: string, updateLessonDto) {
-    return this.lessons;
+  async update(lessonHash: string, updateLessonDto: UpdateLessonDto) {
+    const existingLesson = await this.lessonModel
+      .findOneAndUpdate({ _id: lessonHash }, { $set: updateLessonDto }, { new: true })
+      .exec();
+
+    if (!existingLesson) {
+      throw new NotFoundException(`Lesson "${lessonHash}" not found`)
+    }
+
+    return existingLesson;
   }
 
-  remove(lessonHash: string) {
-    return this.lessons;
+  async remove(lessonHash: string) {
+    const existingLesson = await this.getById(lessonHash);
+    return existingLesson.remove();
   }
 
   addVideo(lessonHash: string, addVideoDto: any) {
-    return this.lessons;
+    return lessonHash;
   }
 
   playVideo(param) {
-    return this.lessons;
+    return param;
   }
 
   removeVideo(param) {
-    return this.lessons;
+    return param;
   }
 
   addKeynote(lessonHash: string, addKeynoteDto: any) {
-    return this.lessons;
+    return addKeynoteDto;
   }
 
   getKeynote(param) {
@@ -77,10 +77,10 @@ export class LessonsService {
       throw new NotFoundException(`Keynote "${param}" not found`);
     }
 
-    return this.lessons;
+    return param;
   }
 
   removeKeynote(param) {
-    return this.lessons;
+    return param;
   }
 }

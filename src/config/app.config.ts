@@ -7,4 +7,7 @@ export default () => ({
     uri: `mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_NAME}`,
     port: parseInt(process.env.DATABASE_PORT, 10) || 27017,
   },
+  api: {
+    key: process.env.API_KEY,
+  }
 });

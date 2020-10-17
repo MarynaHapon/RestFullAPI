@@ -18,6 +18,8 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { AddVideoDto } from './dto/add-video.dto';
 import { AddKeynoteDto } from './dto/add-keynote.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Public } from '../../common/decorators/public.decorator';
+import { SplitCreateLessonBodyPipe } from './pipes/split-create-lesson-body.pipe';
 
 @Controller('lessons')
 export class LessonsController {
@@ -25,6 +27,7 @@ export class LessonsController {
     private readonly lessonsService: LessonsService,
   ) {}
 
+  @Public()
   @Get()
   getAll(
     @Query() paginationQuery: PaginationQueryDto
@@ -34,7 +37,7 @@ export class LessonsController {
 
   @Post()
   create(
-    @Body(ValidationPipe) createLessonDto: CreateLessonDto,
+    @Body(SplitCreateLessonBodyPipe) createLessonDto: CreateLessonDto,
   ) {
     return this.lessonsService.create(createLessonDto);
   }

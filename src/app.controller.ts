@@ -1,5 +1,9 @@
+// Core
 import { Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+
+// App
+import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
@@ -12,6 +16,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Public()
   @Post('login')
   login() {
     return this.appService.login();

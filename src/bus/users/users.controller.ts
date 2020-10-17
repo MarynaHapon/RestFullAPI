@@ -16,6 +16,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -30,6 +31,7 @@ export class UsersController {
     return this.usersService.getAll(paginationQuery);
   }
 
+  @Public()
   @Post()
   create(
     @Body(ValidationPipe) createUserDto: CreateUserDto,

@@ -16,6 +16,7 @@ import { ClassesService } from './classes.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('classes')
 export class ClassesController {
@@ -23,6 +24,7 @@ export class ClassesController {
     private readonly classesService: ClassesService,
   ) {}
 
+  @Public()
   @Get()
   getAll(
     @Query() paginationQuery: PaginationQueryDto,

@@ -3,10 +3,12 @@ import {
   Body,
   Controller,
   Param,
+  Query,
   Delete,
   Get,
   Post,
   Put,
+  ValidationPipe,
 } from '@nestjs/common';
 
 // App
@@ -15,6 +17,7 @@ import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { AddVideoDto } from './dto/add-video.dto';
 import { AddKeynoteDto } from './dto/add-keynote.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @Controller('lessons')
 export class LessonsController {
@@ -23,13 +26,15 @@ export class LessonsController {
   ) {}
 
   @Get()
-  getAll() {
-    return this.lessonsService.getAll();
+  getAll(
+    @Query() paginationQuery: PaginationQueryDto
+  ) {
+    return this.lessonsService.getAll(paginationQuery);
   }
 
   @Post()
   create(
-    @Body() createLessonDto: CreateLessonDto,
+    @Body(ValidationPipe) createLessonDto: CreateLessonDto,
   ) {
     return this.lessonsService.create(createLessonDto);
   }
@@ -44,7 +49,7 @@ export class LessonsController {
   @Put(':lessonHash')
   update(
     @Param('lessonHash') lessonHash: string,
-    @Body() updateLessonDto: UpdateLessonDto,
+    @Body(ValidationPipe) updateLessonDto: UpdateLessonDto,
   ) {
     return this.lessonsService.update(lessonHash, updateLessonDto);
   }
@@ -59,7 +64,7 @@ export class LessonsController {
   @Post(':lessonHash/videos')
   addVideo(
     @Param('lessonHash') lessonHash: string,
-    @Body() addVideoDto: AddVideoDto,
+    @Body(ValidationPipe) addVideoDto: AddVideoDto,
   ) {
     return this.lessonsService.addVideo(lessonHash, addVideoDto);
   }
@@ -81,7 +86,7 @@ export class LessonsController {
   @Post(':lessonHash/keynotes')
   addKeynote(
     @Param('lessonHash') lessonHash: string,
-    @Body() addKeynoteDto: AddKeynoteDto,
+    @Body(ValidationPipe) addKeynoteDto: AddKeynoteDto,
   ) {
     return this.lessonsService.addKeynote(lessonHash, addKeynoteDto);
   }

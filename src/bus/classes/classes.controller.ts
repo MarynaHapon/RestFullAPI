@@ -8,12 +8,14 @@ import {
   Post,
   Put,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 
 // App
 import { ClassesService } from './classes.service';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @Controller('classes')
 export class ClassesController {
@@ -23,10 +25,9 @@ export class ClassesController {
 
   @Get()
   getAll(
-    @Query() paginationQuery,
+    @Query() paginationQuery: PaginationQueryDto,
   ) {
-    const { limit, offset } = paginationQuery;
-    return this.classesService.getAll();
+    return this.classesService.getAll(paginationQuery);
   }
 
   @Post()
@@ -43,10 +44,11 @@ export class ClassesController {
     return this.classesService.getById(classHash);
   }
 
+
   @Put(':classHash')
   update(
     @Param('classHash') classHash: string,
-    @Body() updateClassDto: UpdateClassDto,
+    @Body(ValidationPipe) updateClassDto: UpdateClassDto,
   ) {
     return this.classesService.update(classHash, updateClassDto);
   }

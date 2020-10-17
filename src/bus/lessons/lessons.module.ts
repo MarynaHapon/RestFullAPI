@@ -6,12 +6,20 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { LessonsController } from './lessons.controller';
 import { LessonsService } from './lessons.service';
 import { Lesson, LessonSchema } from './entity/lesson.entity';
+import { Video, VideoSchema } from '../../common/entities/video.entity';
+import { Keynote, KeynoteSchema } from '../../common/entities/keynote.entity';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{
       name: Lesson.name,
       schema: LessonSchema,
+    }, {
+      name: Video.name,
+      schema: VideoSchema,
+    }, {
+      name: Keynote.name,
+      schema: KeynoteSchema,
     }])
   ],
   controllers: [LessonsController],

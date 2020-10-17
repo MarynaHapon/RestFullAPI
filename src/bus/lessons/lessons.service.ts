@@ -1,31 +1,65 @@
 // Core
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model } from 'mongoose';
 
 // App
 import { Lesson } from './entity/lesson.entity';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { Video } from '../../common/entities/video.entity';
+import { Keynote } from '../../common/entities/keynote.entity';
+import { AddVideoDto } from './dto/add-video.dto';
 
 @Injectable()
 export class LessonsService {
   constructor(
+    @InjectConnection() private readonly connection: Connection,
     @InjectModel(Lesson.name) private readonly lessonModel: Model<Lesson>,
+    @InjectModel(Video.name) private readonly videoModel: Model<Video>,
+    @InjectModel(Keynote.name) private readonly keynoteModel: Model<Keynote>,
   ) {}
 
-  getAll() {
+  getAll(
+    paginationQuery: PaginationQueryDto
+  ) {
+    const { offset, limit } = paginationQuery;
     return this.lessonModel
       .find()
+      .skip(offset)
+      .limit(limit)
       .exec();
   }
 
-  create(createLessonDto: CreateLessonDto) {
+  async create(
+    createLessonDto: CreateLessonDto,
+  ) {
+    // createLessonDto.content.videos.map(async (addVideoDto: AddVideoDto) => {
+    //   await this.addVideo(addVideoDto)
+    // });
+
+    // const session = await this.connection.startSession();
+    // session.startTransaction();
+    //
+    // try {
+    //   const createdVideo = new this.videoModel(addVideoDto);
+    //   createdVideo.save({ session });
+    //
+    //   await session.commitTransaction();
+    // } catch (err) {
+    //   await session.abortTransaction();
+    // } finally {
+    //   session.endSession();
+    // }
+
     const lesson = new this.lessonModel(createLessonDto);
     return lesson.save();
   }
 
-  async getById(lessonHash: string) {
+  async getById(
+    lessonHash: string,
+  ) {
     const lesson = await this.lessonModel
       .findOne({ _id: lessonHash })
       .exec();
@@ -37,7 +71,10 @@ export class LessonsService {
     return lesson;
   }
 
-  async update(lessonHash: string, updateLessonDto: UpdateLessonDto) {
+  async update(
+    lessonHash: string,
+    updateLessonDto: UpdateLessonDto,
+  ) {
     const existingLesson = await this.lessonModel
       .findOneAndUpdate({ _id: lessonHash }, { $set: updateLessonDto }, { new: true })
       .exec();
@@ -49,28 +86,45 @@ export class LessonsService {
     return existingLesson;
   }
 
-  async remove(lessonHash: string) {
+  async remove(
+    lessonHash: string,
+  ) {
     const existingLesson = await this.getById(lessonHash);
     return existingLesson.remove();
   }
 
-  addVideo(lessonHash: string, addVideoDto: any) {
-    return lessonHash;
+  async addVideo(
+    lessonHash: string,
+    addVideoDto: any,
+  ) {
+    const lesson = new this.videoModel(addVideoDto);
+    return lesson.save()
+    // return lesson._id;
   }
 
-  playVideo(param) {
+  playVideo(
+    param,
+  ) {
     return param;
   }
 
-  removeVideo(param) {
+  removeVideo(
+    param,
+  ) {
     return param;
   }
 
-  addKeynote(lessonHash: string, addKeynoteDto: any) {
-    return addKeynoteDto;
+  addKeynote(
+    lessonHash: string,
+    addKeynoteDto: any,
+  ) {
+    const lesson = new this.videoModel(addKeynoteDto);
+    return lesson.save();
   }
 
-  getKeynote(param) {
+  getKeynote(
+    param,
+  ) {
     let keynote;
 
     if (!keynote) {
@@ -80,7 +134,9 @@ export class LessonsService {
     return param;
   }
 
-  removeKeynote(param) {
+  removeKeynote(
+    param,
+  ) {
     return param;
   }
 }

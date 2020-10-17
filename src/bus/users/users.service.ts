@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { User } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @Injectable()
 export class UsersService {
@@ -14,18 +15,27 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  getAll() {
+  getAll(
+    paginationQuery: PaginationQueryDto,
+  ) {
+    const { limit, offset } = paginationQuery;
     return this.userModel
       .find()
+      .skip(offset)
+      .limit(limit)
       .exec();
   }
 
-  create(createUserDto: CreateUserDto) {
+  create(
+    createUserDto: CreateUserDto,
+  ) {
     const user = new this.userModel(createUserDto);
     return user.save();
   }
 
-  async getById(userHash: string) {
+  async getById(
+    userHash: string
+  ) {
     const user = await this.userModel
       .findOne({ _id: userHash })
       .exec();
@@ -37,7 +47,10 @@ export class UsersService {
     return user;
   }
 
-  async update(userHash: string, updateUserDto: UpdateUserDto) {
+  async update(
+    userHash: string,
+    updateUserDto: UpdateUserDto,
+  ) {
     const existingUser = await this.userModel
       .findOneAndUpdate({ _id: userHash }, { $set: updateUserDto }, { new: true })
       .exec()
@@ -49,7 +62,9 @@ export class UsersService {
     return existingUser;
   }
 
-  async remove(userHash: string) {
+  async remove(
+    userHash: string,
+  ) {
     const existingUser = await this.getById(userHash);
     return existingUser.remove();
   }

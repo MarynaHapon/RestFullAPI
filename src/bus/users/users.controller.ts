@@ -1,18 +1,21 @@
 // Core
 import {
   Controller,
+  Query,
   Param,
   Body,
   Get,
   Post,
   Put,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 
 // App
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @Controller('users')
 export class UsersController {
@@ -21,13 +24,15 @@ export class UsersController {
   ) {}
 
   @Get()
-  getAll() {
-    return this.usersService.getAll();
+  getAll(
+    @Query() paginationQuery: PaginationQueryDto,
+  ) {
+    return this.usersService.getAll(paginationQuery);
   }
 
   @Post()
   create(
-    @Body() createUserDto: CreateUserDto,
+    @Body(ValidationPipe) createUserDto: CreateUserDto,
   ) {
     return this.usersService.create(createUserDto);
   }
@@ -42,7 +47,7 @@ export class UsersController {
   @Put(':userHash')
   update(
     @Param('userHash') userHash: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(userHash, updateUserDto);
   }

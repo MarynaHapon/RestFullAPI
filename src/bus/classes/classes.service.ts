@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { Class } from './entity/class.entity';
 import { CreateClassDto } from './dto/create-class.dto';
 import { UpdateClassDto } from './dto/update-class.dto';
+import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 
 @Injectable()
 export class ClassesService {
@@ -14,19 +15,27 @@ export class ClassesService {
     @InjectModel(Class.name) private readonly classModel: Model<Class>
   ) {}
 
-  getAll() {
+  getAll(
+    paginationQuery: PaginationQueryDto,
+  ) {
+    const { limit, offset } = paginationQuery;
     return this.classModel
       .find()
+      .skip(offset)
+      .limit(limit)
       .exec();
   }
 
-  create(createClassDto: CreateClassDto) {
-    console.log('createClassDto', createClassDto);
+  create(
+    createClassDto: CreateClassDto,
+  ) {
     const createdClass = new this.classModel(createClassDto)
     return createdClass.save();
   }
 
-  async getById(classHash: string) {
+  async getById(
+    classHash: string,
+  ) {
     const existingClass = await this.classModel
       .findOne({ _id: classHash })
       .exec();
@@ -38,7 +47,10 @@ export class ClassesService {
     return existingClass;
   }
 
-  async update(classHash: string, updateClassDto: UpdateClassDto) {
+  async update(
+    classHash: string,
+    updateClassDto: UpdateClassDto,
+  ) {
     const existingClass = await this.classModel
       .findByIdAndUpdate({ _id: classHash }, { $set: updateClassDto }, { new: true })
       .exec();
@@ -50,16 +62,22 @@ export class ClassesService {
     return existingClass;
   }
 
-  async remove(classHash: string) {
+  async remove(
+    classHash: string,
+  ) {
     const existingClass = await this.getById(classHash);
     return existingClass.remove();
   }
 
-  enrollStudent(classHash: string) {
+  enrollStudent(
+    classHash: string,
+  ) {
     return classHash;
   }
 
-  expelStudent(classHash: string) {
+  expelStudent(
+    classHash: string,
+  ) {
     return classHash;
   }
 }

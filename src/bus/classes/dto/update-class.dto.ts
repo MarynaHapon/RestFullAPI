@@ -1,5 +1,5 @@
 // Core
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/swagger';
 
 // App
 import { CreateClassDto } from './create-class.dto';

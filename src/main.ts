@@ -2,6 +2,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 // App
 import { AppModule } from './app.module';
@@ -29,6 +30,17 @@ async function bootstrap() {
     new WrapResponseInterceptor(),
     new TimeoutInterceptor(),
   );
+
+  const options = new DocumentBuilder()
+    .setTitle('Backend Course API')
+    .setDescription('Backend Course API')
+    .setContact('Maryna Hapon', 'https://git.alldigitalads.com/front.marina.h', 'front.marina.h@alldigitalads')
+    .setVersion('1.0.0')
+    .setLicense('MIT License', 'https://opensource.org/licenses/MIT')
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(port);
 }

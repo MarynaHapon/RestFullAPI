@@ -1,5 +1,14 @@
 // Core
-import { IsArray, IsEnum, IsObject, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsPositive,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 // App
 import { Status } from '../../../common/types';
@@ -17,15 +26,27 @@ class ContentDto {
 }
 
 export class CreateLessonDto {
+  @ApiProperty({
+    example: 'Backend'
+  })
   @IsString()
   readonly title: string;
 
+  @ApiProperty({
+    example: 'Backend Online Course'
+  })
   @IsString()
   readonly description: string;
 
+  @ApiProperty({
+    example: '5'
+  })
   @IsPositive()
   readonly order: number;
 
+  @ApiProperty({
+    example: Status.select,
+  })
   @IsEnum(Status)
   readonly availability: Status;
 

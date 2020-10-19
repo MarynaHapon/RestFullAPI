@@ -10,6 +10,12 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
+import {
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiRequestTimeoutResponse, ApiTags,
+} from '@nestjs/swagger';
 
 // App
 import { LessonsService } from './lessons.service';
@@ -27,6 +33,10 @@ export class LessonsController {
     private readonly lessonsService: LessonsService,
   ) {}
 
+  @ApiTags('Lessons')
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Public()
   @Get()
   getAll(
@@ -35,6 +45,11 @@ export class LessonsController {
     return this.lessonsService.getAll(paginationQuery);
   }
 
+  @ApiTags('Lessons')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Post()
   create(
     @Body(SplitCreateLessonBodyPipe) createLessonDto: CreateLessonDto,
@@ -42,6 +57,11 @@ export class LessonsController {
     return this.lessonsService.create(createLessonDto);
   }
 
+  @ApiTags('Lessons by hash')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Get(':lessonHash')
   getById(
     @Param('lessonHash') lessonHash: string,
@@ -49,6 +69,11 @@ export class LessonsController {
     return this.lessonsService.getById(lessonHash);
   }
 
+  @ApiTags('Lessons by hash')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Put(':lessonHash')
   update(
     @Param('lessonHash') lessonHash: string,
@@ -57,6 +82,11 @@ export class LessonsController {
     return this.lessonsService.update(lessonHash, updateLessonDto);
   }
 
+  @ApiTags('Lessons by hash')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Delete(':lessonHash')
   remove(
     @Param('lessonHash') lessonHash: string,
@@ -64,6 +94,11 @@ export class LessonsController {
     return this.lessonsService.remove(lessonHash);
   }
 
+  @ApiTags('Education')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Post(':lessonHash/videos')
   addVideo(
     @Param('lessonHash') lessonHash: string,
@@ -72,6 +107,11 @@ export class LessonsController {
     return this.lessonsService.addVideo(lessonHash, addVideoDto);
   }
 
+  @ApiTags('Education')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Get(':lessonHash/videos/:videoHash')
   playVideo(
     @Param() param,
@@ -79,6 +119,11 @@ export class LessonsController {
     return this.lessonsService.playVideo(param);
   }
 
+  @ApiTags('Education')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Delete(':lessonHash/videos/:videoHash')
   removeVideo(
     @Param() param,
@@ -86,6 +131,11 @@ export class LessonsController {
     return this.lessonsService.removeVideo(param);
   }
 
+  @ApiTags('Education')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Post(':lessonHash/keynotes')
   addKeynote(
     @Param('lessonHash') lessonHash: string,
@@ -94,6 +144,11 @@ export class LessonsController {
     return this.lessonsService.addKeynote(lessonHash, addKeynoteDto);
   }
 
+  @ApiTags('Education')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Get(':lessonHash/keynotes/:keynoteHash')
   getKeynote(
     @Param() param,
@@ -101,6 +156,11 @@ export class LessonsController {
     return this.lessonsService.getKeynote(param);
   }
 
+  @ApiTags('Education')
+  @ApiForbiddenResponse({ description: 'Доступ запрещен' })
+  @ApiNotFoundResponse({ description: 'Ресурс не найден' })
+  @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
+  @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @Get(':lessonHash/keynotes/:keynoteHash')
   removeKeynote(
     @Param() param,

@@ -15,7 +15,7 @@ import { AddVideoDto } from './dto/add-video.dto';
 @Injectable()
 export class LessonsService {
   constructor(
-    @InjectConnection() private readonly connection: Connection,
+    // @InjectConnection() private readonly connection: Connection,
     @InjectModel(Lesson.name) private readonly lessonModel: Model<Lesson>,
     @InjectModel(Video.name) private readonly videoModel: Model<Video>,
     @InjectModel(Keynote.name) private readonly keynoteModel: Model<Keynote>,
@@ -24,10 +24,10 @@ export class LessonsService {
   getAll(
     paginationQuery: PaginationQueryDto
   ) {
-    const { offset, limit } = paginationQuery;
+    const { limit, page } = paginationQuery;
     return this.lessonModel
       .find()
-      .skip(offset)
+      .skip(page)
       .limit(limit)
       .exec();
   }
@@ -60,9 +60,15 @@ export class LessonsService {
   async getById(
     lessonHash: string,
   ) {
-    const lesson = await this.lessonModel
-      .findOne({ _id: lessonHash })
-      .exec();
+    let lesson;
+
+    try {
+      lesson = await this.lessonModel
+        .findOne({ _id: lessonHash })
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
 
     if (!lesson) {
       throw new NotFoundException(`Lesson "${lessonHash}" not found`);
@@ -75,9 +81,15 @@ export class LessonsService {
     lessonHash: string,
     updateLessonDto: UpdateLessonDto,
   ) {
-    const existingLesson = await this.lessonModel
-      .findOneAndUpdate({ _id: lessonHash }, { $set: updateLessonDto }, { new: true })
-      .exec();
+    let existingLesson;
+
+    try {
+      existingLesson = await this.lessonModel
+        .findOneAndUpdate({ _id: lessonHash }, { $set: updateLessonDto }, { new: true })
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
 
     if (!existingLesson) {
       throw new NotFoundException(`Lesson "${lessonHash}" not found`)

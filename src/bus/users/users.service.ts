@@ -18,10 +18,10 @@ export class UsersService {
   getAll(
     paginationQuery: PaginationQueryDto,
   ) {
-    const { limit, offset } = paginationQuery;
+    const { limit, page } = paginationQuery;
     return this.userModel
       .find()
-      .skip(offset)
+      .skip(page)
       .limit(limit)
       .exec();
   }
@@ -36,9 +36,15 @@ export class UsersService {
   async getById(
     userHash: string
   ) {
-    const user = await this.userModel
-      .findOne({ _id: userHash })
-      .exec();
+    let user;
+
+    try {
+      user = await this.userModel
+        .findOne({ _id: userHash })
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
 
     if (!user) {
       throw new NotFoundException(`User "${userHash}" not found`);
@@ -51,9 +57,15 @@ export class UsersService {
     userHash: string,
     updateUserDto: UpdateUserDto,
   ) {
-    const existingUser = await this.userModel
-      .findOneAndUpdate({ _id: userHash }, { $set: updateUserDto }, { new: true })
-      .exec()
+    let existingUser;
+
+    try {
+      existingUser = await this.userModel
+        .findOneAndUpdate({ _id: userHash }, { $set: updateUserDto }, { new: true })
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
 
     if (!existingUser) {
       throw new NotFoundException(`User "${userHash}" not found`);

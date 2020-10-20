@@ -18,10 +18,10 @@ export class ClassesService {
   getAll(
     paginationQuery: PaginationQueryDto,
   ) {
-    const { limit, offset } = paginationQuery;
+    const { limit, page } = paginationQuery;
     return this.classModel
       .find()
-      .skip(offset)
+      .skip(page)
       .limit(limit)
       .exec();
   }
@@ -36,9 +36,15 @@ export class ClassesService {
   async getById(
     classHash: string,
   ) {
-    const existingClass = await this.classModel
-      .findOne({ _id: classHash })
-      .exec();
+    let existingClass;
+
+    try {
+      existingClass = await this.classModel
+       .findOne({ _id: classHash })
+       .exec();
+    } catch (error) {
+      // @TODO log error
+    }
 
     if (!existingClass) {
       throw new NotFoundException(`Class ":${classHash}" not found`);
@@ -51,9 +57,15 @@ export class ClassesService {
     classHash: string,
     updateClassDto: UpdateClassDto,
   ) {
-    const existingClass = await this.classModel
-      .findByIdAndUpdate({ _id: classHash }, { $set: updateClassDto }, { new: true })
-      .exec();
+    let existingClass;
+
+    try {
+      existingClass = await this.classModel
+        .findByIdAndUpdate({ _id: classHash }, { $set: updateClassDto }, { new: true })
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
 
     if (!existingClass) {
       throw new NotFoundException(`Class ":${classHash}" not found`)

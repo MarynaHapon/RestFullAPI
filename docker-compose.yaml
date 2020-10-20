@@ -2,9 +2,16 @@ version: "3"
 
 services:
   db:
-    image: mongo # container image to be used
+    image: mongo
     restart: always
-    ports: # expose ports in “host:container” format
+    ports:
       - 27017:27017
-    environment: #env variables to pass into the container
+    environment:
       MONGODB_DATABASE: nest-project
+  test-db:
+    image: mongo
+    restart: always
+    ports:
+      - 27018:27017
+    environment:
+      MONGODB_DATABASE: nest-project-test

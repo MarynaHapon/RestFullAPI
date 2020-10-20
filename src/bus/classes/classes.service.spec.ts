@@ -82,41 +82,36 @@ describe('ClassesService', () => {
     });
   });
 
-  // describe('create', () => {
-  //   describe('when input data is valid', () => {
-  //     it('should create new class', async () => {
-  //       const inputData: CreateClassDto = {
-  //         "title": "Class 1",
-  //         "description": "class description",
-  //         "order": 1,
-  //         "duration": {
-  //           "started": new Date(98),
-  //           "closed": new Date(99),
-  //         }
-  //       };
-  //       const expectedClass = {
-  //         "_id": "5f8dc2462f344b3f389ba41e",
-  //         "title": "Class 1",
-  //         "description": "class description",
-  //         "order": 1,
-  //         "duration": {
-  //           "started": "2020-10-17T18:37:44.166Z",
-  //           "closed": "2020-10-17T18:37:44.166Z"
-  //         },
-  //         "__v": 0
-  //       };
-  //
-  //       classRepository.mo
-  //       classRepository.save.mockReturnValue(expectedClass);
-  //       const classItem = await service.create(inputData);
-  //
-  //       expect(classItem).toEqual(expectedClass);
-  //     });
-  //   });
-  //   describe('when input data is invalid', () => {
-  //     it('should return validation error', async () => {
-  //
-  //     });
-  //   });
-  // });
+  describe('create', () => {
+    describe('when input data is valid', () => {
+      it('should create new class', async () => {
+        const inputData: CreateClassDto = {
+          "title": "Class 1",
+          "description": "class description",
+          "order": 1,
+          "duration": {
+            "started": new Date(98),
+            "closed": new Date(99),
+          }
+        };
+        const expectedClass = {
+          "_id": "5f8dc2462f344b3f389ba41e",
+          "title": "Class 1",
+          "description": "class description",
+          "order": 1,
+          "duration": {
+            "started": "2020-10-17T18:37:44.166Z",
+            "closed": "2020-10-17T18:37:44.166Z"
+          },
+          "__v": 0
+        };
+
+        it.todo('should create new class');
+      });
+    });
+
+    describe('when input data is invalid', () => {
+      it.todo('should return validation error');
+    });
+  });
 });

@@ -4,11 +4,14 @@ import {
   Query,
   Param,
   Body,
+  HttpCode,
+  UseInterceptors,
   Get,
   Post,
   Put,
   Delete,
-  ValidationPipe, HttpCode, HttpStatus,
+  ValidationPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,101 +23,104 @@ import {
 } from '@nestjs/swagger';
 
 // App
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { VideosService } from './videos.service';
+import { WrapResponseInterceptor } from '../../common/interceptors/wrap-response.interceptor';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
-import { Public } from '../../common/decorators/public.decorator';
+import { CreateVideoDto } from './dto/create-video.dto';
+import { UpdateVideoDto } from './dto/update-video.dto';
 
-@Controller('users')
-export class UsersController {
+@Controller('videos')
+export class VideosController {
   constructor(
-    private readonly usersService: UsersService
+    private readonly videosService: VideosService,
   ) {}
 
-  @ApiTags('Users')
+  @ApiTags('Videos')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Получить пользователей',
-    description: 'Эндпоинт используется получения всех пользователей',
+    summary: 'Получить все видео',
+    description: 'Эндпоинт используется для получения всех видео',
   })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
+  @UseInterceptors(new WrapResponseInterceptor())
   @Get()
   getAll(
     @Query() paginationQuery: PaginationQueryDto,
   ) {
-    return this.usersService.getAll(paginationQuery);
+    return this.videosService.getAll(paginationQuery);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Videos')
+  @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Создать пользователя',
-    description: 'Эндпоинт используется для создания пользователя. Необязательное условие состоит в том чтобы добавить проверку на уникальность email.',
+    summary: 'Создать видео',
+    description: 'Эндпоинт используется для создания видео.',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
-  @Public()
   @Post()
   create(
-    @Body(ValidationPipe) createUserDto: CreateUserDto,
+    @Body() createVideoDto: CreateVideoDto,
   ) {
-    return this.usersService.create(createUserDto);
+    return this.videosService.create(createVideoDto);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Videos')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Получить пользователя по hash',
-    description: 'Эндпоинт используется получения пользователя по его hash',
+    summary: 'Получить видео по hash',
+    description: 'Эндпоинт используется для получения конкретного видео по его hash',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
-  @Get(':userHash')
+  @UseInterceptors(new WrapResponseInterceptor())
+  @Get(':videoHash')
   getById(
-    @Param('userHash') userHash: string,
+    @Param('videoHash') videoHash: string,
   ) {
-    return this.usersService.getById(userHash);
+    return this.videosService.getById(videoHash);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Videos')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Обновить пользователя',
-    description: 'Эндпоинт используется для обновления пользователя по его hash',
+    summary: 'Обновить видео',
+    description: 'Эндпоинт используется для обновления видео по его hash',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
-  @Put(':userHash')
+  @UseInterceptors(new WrapResponseInterceptor())
+  @Put(':videoHash')
   update(
-    @Param('userHash') userHash: string,
-    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+    @Param('videoHash') videoHash: string,
+    @Body(ValidationPipe) updateVideoDto: UpdateVideoDto,
   ) {
-    return this.usersService.update(userHash, updateUserDto);
+    return this.videosService.update(videoHash, updateVideoDto);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Videos')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Удалить пользователя',
-    description: 'Эндпоинт используется для удаления пользователя по его hash',
+    summary: 'Удалить видео',
+    description: 'Эндпоинт используется для удаления видео по его hash',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':userHash')
+  @Delete(':videoHash')
   remove(
-    @Param('userHash') userHash: string,
+    @Param('videoHash') videoHash: string,
   ) {
-    return this.usersService.remove(userHash);
+    return this.videosService.remove(videoHash);
   }
 }

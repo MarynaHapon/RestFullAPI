@@ -10,7 +10,7 @@ export class EnrollStudentDto {
     example: '5f8aa4f269308d35c0588a3c'
   })
   @IsString()
-  readonly user: string;
+  readonly userHash: string;
 
   @ApiProperty({
     example: Status.select,

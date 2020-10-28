@@ -1,8 +1,13 @@
 // Core
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { IsObject } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
+// App
+import { Status } from '../../../common/types';
+import { User } from '../../users/entity/user.entity';
+import { Lesson } from '../../lessons/entity/lesson.entity';
 
 @Schema()
 class Duration {
@@ -34,7 +39,7 @@ export class Class extends Document {
   description: string;
 
   @ApiProperty({
-    example: '2',
+    example: 2,
   })
   @Prop({ required: true })
   order: number;
@@ -42,6 +47,29 @@ export class Class extends Document {
   @Prop({ required: true })
   @IsObject()
   duration: Duration;
+
+  @Prop([{
+    _id: Types.ObjectId,
+    user: {
+      type: Types.ObjectId,
+      ref: User.name,
+    },
+    status: String,
+    notes: String,
+  }])
+  students: {
+    user: string;
+    status: Status;
+    notes: string;
+  }[];
+
+  @Prop({
+    type: [{
+      type: Types.ObjectId,
+      ref: Lesson.name,
+    }]
+  })
+  lessons: string[];
 }
 
 export const ClassSchema = SchemaFactory.createForClass(Class);

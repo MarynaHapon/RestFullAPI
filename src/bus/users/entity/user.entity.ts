@@ -21,7 +21,7 @@ export class User extends Document {
   email: string;
 
   @ApiProperty({
-    example: '+380 73 111-11-11',
+    example: '+380731111111',
   })
   @Prop({ required: true })
   phone: string;

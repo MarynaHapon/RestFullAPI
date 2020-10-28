@@ -6,8 +6,6 @@ import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { LessonsController } from './lessons.controller';
 import { LessonsService } from './lessons.service';
 import { Lesson } from './entity/lesson.entity';
-import { Video } from '../../common/entities/video.entity';
-import { Keynote } from '../../common/entities/keynote.entity';
 
 describe('Lessons Controller', () => {
   let controller: LessonsController;
@@ -19,8 +17,6 @@ describe('Lessons Controller', () => {
         LessonsService,
         { provide: getModelToken(MongooseModule.name), useValue: {} },
         { provide: getModelToken(Lesson.name), useValue: {} },
-        { provide: getModelToken(Video.name), useValue: {} },
-        { provide: getModelToken(Keynote.name), useValue: {} },
       ]
     }).compile();
 

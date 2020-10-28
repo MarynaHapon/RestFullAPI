@@ -6,8 +6,8 @@ import { getModelToken } from '@nestjs/mongoose';
 // App
 import { LessonsService } from './lessons.service';
 import { Lesson } from './entity/lesson.entity';
-import { Video } from '../../common/entities/video.entity';
-import { Keynote } from '../../common/entities/keynote.entity';
+// import { Video } from '../../common/entities/video.entity';
+// import { Keynote } from '../../common/entities/keynote.entity';
 
 describe('LessonsService', () => {
   let service: LessonsService;
@@ -18,8 +18,8 @@ describe('LessonsService', () => {
         LessonsService,
         { provide: Connection, useValue: {} },
         { provide: getModelToken(Lesson.name), useValue: {} },
-        { provide: getModelToken(Video.name), useValue: {} },
-        { provide: getModelToken(Keynote.name), useValue: {} },
+        // { provide: getModelToken(Video.name), useValue: {} },
+        // { provide: getModelToken(Keynote.name), useValue: {} },
       ],
     }).compile();
 

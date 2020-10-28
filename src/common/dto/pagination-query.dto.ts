@@ -1,5 +1,5 @@
 // Core
-import { IsOptional, IsPositive } from 'class-validator';
+import { IsOptional, IsPositive, IsNumber, Min } from 'class-validator';
 
 export class PaginationQueryDto {
   @IsOptional()
@@ -7,6 +7,7 @@ export class PaginationQueryDto {
   limit: number;
 
   @IsOptional()
-  @IsPositive()
+  @IsNumber()
+  @Min(0)
   page: number;
 }

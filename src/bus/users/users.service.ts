@@ -33,6 +33,26 @@ export class UsersService {
     return user.save();
   }
 
+  async getByEmail(
+    email: string
+  ) {
+    let user;
+
+    try {
+      user = await this.userModel
+        .findOne({ email: email })
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User "${email}" not found`);
+    }
+
+    return user;
+  }
+
   async getById(
     userHash: string
   ) {
@@ -78,6 +98,6 @@ export class UsersService {
     userHash: string,
   ) {
     const existingUser = await this.getById(userHash);
-    return existingUser.remove();
+    existingUser.remove();
   }
 }

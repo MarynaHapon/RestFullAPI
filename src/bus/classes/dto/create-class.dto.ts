@@ -22,7 +22,6 @@ class DurationDto {
   readonly closed: Date;
 }
 
-
 export class CreateClassDto {
   @ApiProperty({
     example: 'Backend',
@@ -37,7 +36,7 @@ export class CreateClassDto {
   readonly description: string;
 
   @ApiProperty({
-    example: '2',
+    example: 2,
   })
   @IsPositive()
   @Min(1)

@@ -4,11 +4,14 @@ import {
   Query,
   Param,
   Body,
+  HttpCode,
+  UseInterceptors,
   Get,
   Post,
   Put,
   Delete,
-  ValidationPipe, HttpCode, HttpStatus,
+  ValidationPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,101 +23,105 @@ import {
 } from '@nestjs/swagger';
 
 // App
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { KeynotesService } from './keynotes.service';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
-import { Public } from '../../common/decorators/public.decorator';
+import { CreateKeynoteDto } from './dto/create-keynote.dto';
+import { UpdateKeynoteDto } from './dto/update-keynote.dto';
+import { WrapResponseInterceptor } from '../../common/interceptors/wrap-response.interceptor';
 
-@Controller('users')
-export class UsersController {
+@Controller('keynotes')
+export class KeynotesController {
   constructor(
-    private readonly usersService: UsersService
+    private readonly keynotesService: KeynotesService,
   ) {}
 
-  @ApiTags('Users')
+  @ApiTags('Keynotes')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Получить пользователей',
-    description: 'Эндпоинт используется получения всех пользователей',
+    summary: 'Получить все презентации',
+    description: 'Эндпоинт используется для получения всех презентаций',
   })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
+  @UseInterceptors(new WrapResponseInterceptor())
   @Get()
   getAll(
     @Query() paginationQuery: PaginationQueryDto,
   ) {
-    return this.usersService.getAll(paginationQuery);
+    return this.keynotesService.getAll(paginationQuery);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Keynotes')
+  @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Создать пользователя',
-    description: 'Эндпоинт используется для создания пользователя. Необязательное условие состоит в том чтобы добавить проверку на уникальность email.',
+    summary: 'Создать презентацию',
+    description: 'Эндпоинт используется для создания презентаций.',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
-  @Public()
   @Post()
   create(
-    @Body(ValidationPipe) createUserDto: CreateUserDto,
+    @Body() createKeynoteDto: CreateKeynoteDto,
   ) {
-    return this.usersService.create(createUserDto);
+    return this.keynotesService.create(createKeynoteDto);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Keynotes')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Получить пользователя по hash',
-    description: 'Эндпоинт используется получения пользователя по его hash',
+    summary: 'Получить презентацию по hash',
+    description: 'Эндпоинт используется для получения конкретной презентации по hash',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
-  @Get(':userHash')
+  @UseInterceptors(new WrapResponseInterceptor())
+  @Get(':keynoteHash')
   getById(
-    @Param('userHash') userHash: string,
+    @Param('keynoteHash') keynoteHash: string,
   ) {
-    return this.usersService.getById(userHash);
+    return this.keynotesService.getById(keynoteHash);
   }
 
-  @ApiTags('Users')
+
+  @ApiTags('Keynotes')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Обновить пользователя',
-    description: 'Эндпоинт используется для обновления пользователя по его hash',
+    summary: 'Обновить презентацию',
+    description: 'Эндпоинт используется для обновления презентации по hash',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
-  @Put(':userHash')
+  @UseInterceptors(new WrapResponseInterceptor())
+  @Put(':keynoteHash')
   update(
-    @Param('userHash') userHash: string,
-    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+    @Param('keynoteHash') keynoteHash: string,
+    @Body(ValidationPipe) updateKeynoteDto: UpdateKeynoteDto,
   ) {
-    return this.usersService.update(userHash, updateUserDto);
+    return this.keynotesService.update(keynoteHash, updateKeynoteDto);
   }
 
-  @ApiTags('Users')
+  @ApiTags('Keynotes')
   @ApiBasicAuth()
   @ApiOperation({
-    summary: 'Удалить пользователя',
-    description: 'Эндпоинт используется для удаления пользователя по его hash',
+    summary: 'Удалить презентацию',
+    description: 'Эндпоинт используется для удаления презентации по hash',
   })
   @ApiForbiddenResponse({ description: 'Доступ запрещен' })
   @ApiNotFoundResponse({ description: 'Ресурс не найден' })
   @ApiRequestTimeoutResponse({ description: 'Долгий ответ сервера' })
   @ApiInternalServerErrorResponse({ description: 'Внутренняя ошибка сервера' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(':userHash')
+  @Delete(':keynoteHash')
   remove(
-    @Param('userHash') userHash: string,
+    @Param('keynoteHash') keynoteHash: string,
   ) {
-    return this.usersService.remove(userHash);
+    this.keynotesService.remove(keynoteHash);
   }
 }

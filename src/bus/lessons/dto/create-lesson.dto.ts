@@ -1,28 +1,38 @@
 // Core
 import {
-  IsArray,
   IsEnum,
   IsObject,
   IsOptional,
   IsPositive,
   IsString,
-  ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Prop } from '@nestjs/mongoose';
+import * as mongoose from "mongoose";
 
 // App
 import { Status } from '../../../common/types';
-import { AddVideoDto } from './add-video.dto';
-import { AddKeynoteDto } from './add-keynote.dto';
+import { Video } from '../../videos/entity/video.entity';
+import { Keynote } from '../../keynotes/entity/keynote.entity';
 
 class ContentDto {
-  @IsArray()
-  @ValidateNested()
-  readonly videos: AddVideoDto[];
+  @Prop([{
+    _id: mongoose.Schema.Types.ObjectId,
+    lessonHash: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Video.name,
+    },
+  }])
+  readonly videos?: [];
 
-  @IsArray()
-  @ValidateNested()
-  readonly keynotes: AddKeynoteDto[];
+  @Prop([{
+    _id: mongoose.Schema.Types.ObjectId,
+    lessonHash: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Keynote.name,
+    },
+  }])
+  readonly keynotes?: [];
 }
 
 export class CreateLessonDto {
@@ -39,7 +49,7 @@ export class CreateLessonDto {
   readonly description: string;
 
   @ApiProperty({
-    example: '5'
+    example: 5,
   })
   @IsPositive()
   readonly order: number;
@@ -52,5 +62,5 @@ export class CreateLessonDto {
 
   @IsObject()
   @IsOptional()
-  readonly content: ContentDto;
+  readonly content?: ContentDto;
 }

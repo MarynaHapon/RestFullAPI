@@ -12,6 +12,9 @@ import { ClassesModule } from './bus/classes/classes.module';
 import { LessonsModule } from './bus/lessons/lessons.module';
 import { UsersModule } from './bus/users/users.module';
 import { CommonModule } from './common/common.module';
+import { KeynotesModule } from './bus/keynotes/keynotes.module';
+import { VideosModule } from './bus/videos/videos.module';
+import { AuthModule } from './bus/auth/auth.module';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { CommonModule } from './common/common.module';
     LessonsModule,
     UsersModule,
     CommonModule,
+    KeynotesModule,
+    VideosModule,
+    AuthModule,
   ],
   controllers: [
     AppController,

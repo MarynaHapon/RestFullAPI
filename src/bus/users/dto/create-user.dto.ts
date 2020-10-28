@@ -25,7 +25,7 @@ export class CreateUserDto {
   readonly email: string;
 
   @ApiProperty({
-    example: '+380 73 111-11-11',
+    example: '+380731111111',
   })
   @IsPhoneNumber('UA')
   readonly phone: string;

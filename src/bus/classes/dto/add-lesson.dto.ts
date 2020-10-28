@@ -2,10 +2,10 @@
 import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ExpelStudentDto {
+export class AddLessonDto {
   @ApiProperty({
-    example: '5f8aa4f269308d35c0588a3c'
+    example: '5f907d27082a6c246a8d7877'
   })
   @IsString()
-  readonly userHash: string;
+  readonly lessonHash: string;
 }

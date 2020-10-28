@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 
 // APP
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { getCookiesMap } from '../helpers/get-cookie-map.helper';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -29,9 +30,9 @@ export class ApiKeyGuard implements CanActivate {
       .switchToHttp()
       .getRequest<Request>();
 
-    const authHeader = request
-      .header('Authorization');
+    const cookies = getCookiesMap(request.headers.cookie);
+    const authKey = cookies['auth'];
 
-    return authHeader === apiKey;
+    return authKey === apiKey;
   }
 }

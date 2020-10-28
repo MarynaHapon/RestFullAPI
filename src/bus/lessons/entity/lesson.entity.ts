@@ -1,31 +1,11 @@
 // Core
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Types, Document } from 'mongoose';
 
 // App
 import { Status } from '../../../common/types';
-import { ValidateNested } from 'class-validator';
-
-class LessonMedia {
-  @Prop({ required: true })
-  title: string;
-
-  @Prop({ required: true })
-  order: number;
-
-  @Prop({ required: true })
-  uri: string;
-}
-
-class Content {
-  @Prop({ required: true })
-  @ValidateNested()
-  videos: LessonMedia[];
-
-  @ValidateNested()
-  @Prop({ required: true })
-  keynotes: LessonMedia[];
-}
+import { Video } from '../../videos/entity/video.entity';
+import { Keynote } from '../../keynotes/entity/keynote.entity';
 
 @Schema()
 export class Lesson extends Document {
@@ -41,7 +21,21 @@ export class Lesson extends Document {
   @Prop({ required: true })
   availability: Status;
 
-  content?: Content;
+  @Prop({
+    _id: Types.ObjectId,
+    videos: [{
+      type: Types.ObjectId,
+      ref: Video.name,
+    }],
+    keynotes: [{
+      type: Types.ObjectId,
+      ref: Keynote.name,
+    }],
+  })
+  content?: {
+    videos?: string[];
+    keynotes?: string[];
+  };
 }
 
 export const LessonSchema = SchemaFactory.createForClass(Lesson);

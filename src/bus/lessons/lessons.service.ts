@@ -1,5 +1,5 @@
 // Core
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 
@@ -8,17 +8,14 @@ import { Lesson } from './entity/lesson.entity';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
-import { Video } from '../../common/entities/video.entity';
-import { Keynote } from '../../common/entities/keynote.entity';
 import { AddVideoDto } from './dto/add-video.dto';
+import { AddKeynoteDto } from './dto/add-keynote.dto';
 
 @Injectable()
 export class LessonsService {
   constructor(
-    // @InjectConnection() private readonly connection: Connection,
+    @InjectConnection() private readonly connection: Connection,
     @InjectModel(Lesson.name) private readonly lessonModel: Model<Lesson>,
-    @InjectModel(Video.name) private readonly videoModel: Model<Video>,
-    @InjectModel(Keynote.name) private readonly keynoteModel: Model<Keynote>,
   ) {}
 
   getAll(
@@ -29,32 +26,17 @@ export class LessonsService {
       .find()
       .skip(page)
       .limit(limit)
+      .populate('content.videos')
+      .populate('content.keynotes')
       .exec();
   }
 
   async create(
     createLessonDto: CreateLessonDto,
   ) {
-    // createLessonDto.content.videos.map(async (addVideoDto: AddVideoDto) => {
-    //   await this.addVideo(addVideoDto)
-    // });
-
-    // const session = await this.connection.startSession();
-    // session.startTransaction();
-    //
-    // try {
-    //   const createdVideo = new this.videoModel(addVideoDto);
-    //   createdVideo.save({ session });
-    //
-    //   await session.commitTransaction();
-    // } catch (err) {
-    //   await session.abortTransaction();
-    // } finally {
-    //   session.endSession();
-    // }
-
     const lesson = new this.lessonModel(createLessonDto);
-    return lesson.save();
+    lesson.save();
+    return { hash: lesson._id }
   }
 
   async getById(
@@ -102,53 +84,116 @@ export class LessonsService {
     lessonHash: string,
   ) {
     const existingLesson = await this.getById(lessonHash);
-    return existingLesson.remove();
+    existingLesson.remove();
   }
 
   async addVideo(
     lessonHash: string,
-    addVideoDto: any,
+    addVideoDto: AddVideoDto,
   ) {
-    const lesson = new this.videoModel(addVideoDto);
-    return lesson.save()
-    // return lesson._id;
-  }
+    const existingLesson = await this.getById(lessonHash);
 
-  playVideo(
-    param,
-  ) {
-    return param;
-  }
+    const existingVideo = existingLesson.content.videos
+      .find(video => String(video.videoHash) === addVideoDto.videoHash);
 
-  removeVideo(
-    param,
-  ) {
-    return param;
-  }
-
-  addKeynote(
-    lessonHash: string,
-    addKeynoteDto: any,
-  ) {
-    const lesson = new this.videoModel(addKeynoteDto);
-    return lesson.save();
-  }
-
-  getKeynote(
-    param,
-  ) {
-    let keynote;
-
-    if (!keynote) {
-      throw new NotFoundException(`Keynote "${param}" not found`);
+    if (existingVideo) {
+      throw new ConflictException(`addVideo: Video ${addVideoDto.videoHash} already exist`);
     }
 
-    return param;
+    existingLesson.content.videos.push(addVideoDto.videoHash);
+    existingLesson.save();
   }
 
-  removeKeynote(
-    param,
+  async getVideo(
+    lessonHash: string,
+    videoHash: string,
   ) {
-    return param;
+    let existingLesson;
+
+    try {
+      existingLesson = await this.lessonModel
+        .findOne({ _id: lessonHash })
+        .populate('content.videos')
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
+
+    if (!existingLesson) {
+      throw new NotFoundException(`getVideo: Lesson "${lessonHash}" not found`);
+    }
+
+    const existingVideo = existingLesson.content.videos
+      .find(video => String(video._id) === videoHash);
+
+    if (!existingVideo) {
+      throw new NotFoundException(`getVideo: Video "${videoHash}" not found`);
+    }
+
+    return existingVideo;
+  }
+
+  async removeVideo(
+    lessonHash: string,
+    videoHash: string,
+  ) {
+    const existingLesson = await this.getById(lessonHash);
+    existingLesson.content.videos.remove(videoHash);
+    existingLesson.save();
+  }
+
+  async addKeynote(
+    lessonHash: string,
+    addKeynoteDto: AddKeynoteDto,
+  ) {
+    const existingLesson = await this.getById(lessonHash);
+
+    const existingKeynote = existingLesson.content.videos
+      .find(video => String(video.videoHash) === addKeynoteDto.keynoteHash);
+
+    if (existingKeynote) {
+      throw new ConflictException(`addKeynote: Keynote ${addKeynoteDto.keynoteHash} already exist`);
+    }
+
+    existingLesson.content.keynotes.push(addKeynoteDto.keynoteHash);
+    existingLesson.save();
+  }
+
+  async getKeynote(
+    lessonHash: string,
+    keynoteHash: string,
+  ) {
+    let existingLesson;
+
+    try {
+      existingLesson = await this.lessonModel
+        .findOne({ _id: lessonHash })
+        .populate('content.keynotes')
+        .exec();
+    } catch (error) {
+      // @TODO log error
+    }
+
+    if (!existingLesson) {
+      throw new NotFoundException(`getKeynote: Keynote "${lessonHash}" not found`);
+    }
+
+    const existingKeynote = existingLesson.content.keynotes
+      .find(keynote => String(keynote._id) === keynoteHash);
+
+    if (!existingKeynote) {
+      throw new NotFoundException(`getKeynote: Keynote "${keynoteHash}" not found`);
+    }
+
+    return existingKeynote;
+  }
+
+  async removeKeynote(
+    lessonHash: string,
+    keynoteHash: string,
+  ) {
+    const existingLesson = await this.getById(lessonHash);
+    existingLesson.content.keynotes.remove(keynoteHash);
+    existingLesson.save();
   }
 }
